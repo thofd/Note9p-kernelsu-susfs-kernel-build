@@ -1,0 +1,91 @@
+name: Build Kernel
+run-name: Build Kernel with KernelSU Next susfs
+on:
+  workflow_dispatch:
+    inputs:
+      phone:
+        description: '选择手机型号：'
+        required: true
+        default: 'umi'
+        type: choice
+        options:
+          - umi
+          - cmi
+      version:
+        description: '自定义版本名（如perf-xxx）可为空（则为n0kernel）'
+        required: false
+        type: string
+jobs:
+  build_job:
+    runs-on: ubuntu-22.04
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
+      CI: "false"
+    steps:
+
+      - name: 1.拉取编译链
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/19.0.0git-20240125-release/Clang-19.0.0git-20240125.tar.gz
+          mkdir -p clang
+          tar -xzf Clang-19.0.0git-20240125.tar.gz -C clang
+
+      - name: 2.拉取源码
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          git clone https://github.com/clcwpwqi/kernel_865_mod --depth=1 android_kernel
+          git clone https://github.com/clcwpwqi/kernel.git src
+
+      - name: 3.添加KernelSU
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          curl -LSs "https://raw.githubusercontent.com/clcwpwqi/CWKernelSU/main/kernel/setup.sh" | bash -s susfs-dev
+
+      - name: 4.开始构建
+        run: |
+          export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang/bin:$PATH
+          echo "Updated PATH: $PATH"
+          clang --version
+          
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          # 自定义版本
+          if [ ! -z ${{ inputs.version }} ]; then
+            echo "不为空"
+            sed -i '$s|echo "\$res"|echo "-${{ inputs.version }}"|' ./scripts/setlocalversion
+          else
+            echo "输入为空"
+          fi
+
+          if [ ${{ inputs.phone }} = 'umi' ]; then
+            echo "选择小米10配置"
+            DEFCONFIG=umi_defconfig
+          elif [ ${{ inputs.phone }} = 'cmi' ]; then
+            echo "选择小米10Pro配置"
+            DEFCONFIG=cmi_defconfig
+          else
+            echo "输入错误"
+          fi
+
+          echo "当前配置为 $DEFCONFIG"
+
+          make -j$(nproc --all) CC=clang O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 CROSS_COMPILE=aarch64-buildroot-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-androideabi- $DEFCONFIG
+          make -j8 CC=clang O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi-    
+      
+      - name: 5.复制boot文件
+        run: |
+            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel/out/arch/arm64/boot
+            ls
+            strings Image | grep "Linux version"
+            mkdir $GITHUB_WORKSPACE/kernel_workspace/src/Anykernel/kernels/
+            mkdir $GITHUB_WORKSPACE/kernel_workspace/src/Anykernel/kernels/miui/
+            cp Image $GITHUB_WORKSPACE/kernel_workspace/src/Anykernel/kernels/miui/
+
+      - name: 6.上传刷机包
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.phone }}-KernelSU-Next-${{ inputs.susfs }}-AnyKernel3
+          path: kernel_workspace/src/Anykernel/*
+          retention-days: 3
