@@ -42,7 +42,7 @@ jobs:
       - name: 3.添加KernelSU
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          curl -LSs "https://raw.githubusercontent.com/clcwpwqi/CWKernelSU/main/kernel/setup.sh" | bash -s susfs-dev
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s susfs-dev
 
       - name: 4.开始构建
         run: |
