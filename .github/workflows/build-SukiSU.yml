@@ -1,4 +1,4 @@
-name: Build Kernel
+name: Build Kernel sukisu
 run-name: Build Kernel with KernelSU Next susfs
 on:
   workflow_dispatch:
