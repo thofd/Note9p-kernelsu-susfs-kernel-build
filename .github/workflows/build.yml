@@ -6,10 +6,10 @@ on:
       phone:
         description: '选择手机型号：'
         required: true
-        default: 'umi'
+        default: 'gauguin_user'
         type: choice
         options:
-          - umi
+          - gauguin_user
           - cmi
       susfs:
         description: '是否集成SUSFS：'
@@ -44,8 +44,8 @@ jobs:
       - name: 2.拉取源码与补丁
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://github.com/clcwpwqi/kernel_xiaomi_sm8250_n0kernel --depth=1 android_kernel
-          git clone https://github.com/clcwpwqi/kernel.git src
+          git clone https://github.com/thofd/neko_kernel_xiaomi_gauguin --depth=1 android_kernel
+          git clone https://github.com/thofd/Note9p-kernelsu-susfs-kernel-build.git src
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 --depth=1 susfs
 
       - name: 3.添加KernelSU Next
@@ -96,9 +96,9 @@ jobs:
             echo "输入为空"
           fi
 
-          if [ ${{ inputs.phone }} = 'umi' ]; then
+          if [ ${{ inputs.phone }} = 'gauguin_user' ]; then
             echo "选择小米10配置"
-            DEFCONFIG=vendor/umi_defconfig
+            DEFCONFIG=vendor/gauguin_user_defconfig
           elif [ ${{ inputs.phone }} = 'cmi' ]; then
             echo "选择小米10Pro配置"
             DEFCONFIG=vendor/cmi_defconfig
