@@ -59,7 +59,7 @@ jobs:
           echo "进入源码目录"
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
-          patch -p1 --force < new_defconfig.patch
+          #patch -p1 --force < new_defconfig.patch
           patch -p1 --force < non-kprobes.patch
 
       - name: 5.修补susfs
