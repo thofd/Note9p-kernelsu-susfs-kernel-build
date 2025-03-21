@@ -44,9 +44,9 @@ jobs:
 
       - name: 2.拉取源码与补丁
         run: |
+          mkdir $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone https://github.com/clcwpwqi/kernel_865_mod -b android14-lineage21-mod --depth=1 android_kernel
-          git clone https://github.com/clcwpwqi/kernel.git src
           cd android_kernel
           bash build.sh umi ksu
 
