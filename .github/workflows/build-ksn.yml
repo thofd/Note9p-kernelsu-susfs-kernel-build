@@ -40,7 +40,7 @@ jobs:
           wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
           unzip 20210522.zip
           cd ..
-          sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache python
+          sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache python-is-python3
 
       - name: 2.拉取源码与补丁
         run: |
