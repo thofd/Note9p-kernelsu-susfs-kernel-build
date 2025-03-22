@@ -1,5 +1,5 @@
-name: Build Kernel ksn stawing
-run-name: Build Kernel srw with KernelSU Next susfs
+name: Build Kernel strawing
+run-name: Build Kernel strawing with KernelSU Next susfs
 on:
   workflow_dispatch:
 jobs:
