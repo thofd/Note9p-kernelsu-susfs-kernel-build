@@ -2,27 +2,6 @@ name: Build Kernel ksn stawing
 run-name: Build Kernel srw with KernelSU Next susfs
 on:
   workflow_dispatch:
-    inputs:
-      phone:
-        description: '选择手机型号：'
-        required: true
-        default: 'umi'
-        type: choice
-        options:
-          - umi
-          - cmi
-      susfs:
-        description: '是否集成SUSFS：'
-        required: true
-        default: 'SUSFS'
-        type: choice
-        options:
-          - SUSFS
-          - NoSUSFS
-      version:
-        description: '自定义版本名（如perf-xxx）可为空（则为n0kernel）'
-        required: false
-        type: string
 jobs:
   build_job:
     runs-on: ubuntu-22.04
@@ -42,7 +21,7 @@ jobs:
           cd ..
           sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev ccache python-is-python3
 
-      - name: 2.拉取源码与补丁
+      - name: 2.拉取并编译
         run: |
           mkdir $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
@@ -50,9 +29,9 @@ jobs:
           cd android_kernel
           bash build.sh umi ksu
 
-      - name: 8.上传刷机包
+      - name: 3.上传刷机包
         uses: actions/upload-artifact@v4
         with:
-          name: KernelSU-Next-AnyKernel3
+          name: KernelSU-Next-SUSFS-AnyKernel3
           path: kernel_workspace/android_kernel/anykernel*
           retention-days: 3
