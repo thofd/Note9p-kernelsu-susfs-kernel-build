@@ -1,5 +1,5 @@
-name: Build Kernel strawing
-run-name: Build Kernel strawing with KernelSU Next susfs
+name: Build Kernel note9p
+run-name: Build Kernel note9p with KernelSU Next susfs
 on:
   workflow_dispatch:
 jobs:
@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://github.com/clcwpwqi/kernel_865_mod -b android14-lineage21-mod --depth=1 android_kernel
+          git clone https://github.com/thofd/neko_kernel_xiaomi_gauguin -b main --depth=1 android_kernel
           cd android_kernel
           bash build.sh umi ksu
 
