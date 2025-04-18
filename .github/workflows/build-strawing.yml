@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: '自定义版本名（如perf-xxx）可为空（则为n0kernel）'
+        description: '自定义版本名（如perf-xxx）'
         required: false
         type: string
 jobs:
@@ -30,13 +30,13 @@ jobs:
         run: |
           mkdir $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://github.com/clcwpwqi/kernel_865_mod -b android14-lineage21-mod --depth=1 android_kernel
+          git clone https://github.com/clcwpwqi/kernel_865_mod -b android14-lineage22-mod --depth=1 android_kernel
           cd android_kernel
           bash build-action.sh umi ksu
 
       - name: 3.上传刷机包
         uses: actions/upload-artifact@v4
         with:
-          name: KernelSU-Next-SUSFS-AnyKernel3
+          name: KernelSU-Next-SUSFS-AnyKernel3-${{ inputs.version }}
           path: kernel_workspace/android_kernel/anykernel*
           retention-days: 3
