@@ -2,6 +2,11 @@ name: Build Kernel strawing
 run-name: Build Kernel strawing with KernelSU Next susfs
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: '自定义版本名（如perf-xxx）可为空（则为n0kernel）'
+        required: false
+        type: string
 jobs:
   build_job:
     runs-on: ubuntu-22.04
